@@ -1,38 +1,59 @@
 import React, {useState} from 'react';
 import './App.css';
-import {WishList} from "./WishList";
+import {OsTypeForSelect, WishList} from "./WishList";
 import {v1} from "uuid";
 
-export type OsType = "All" | "iOS" | "Android"
+export type OsType = "All" | "iOS" | "Android" | OsTypeForSelect
 
 export type WishesDataPropsType = {
-	id: string
-	title: string
-	OS: OsType
-	checked: boolean
+    id: string
+    title: string
+    OS: OsType
+    checked: boolean
 }
-function App() {
-	const [wishes, setWishes] = useState<WishesDataPropsType[]>([
-		{id: v1(), title: 'Samsung Galaxy S23', OS: "Android", checked: true},
-		{id: v1(), title: 'IPhone 13 ProMax', OS: "iOS", checked: true},
-		{id: v1(), title: 'Xiaomi 13', OS: "Android", checked: true},
-		{id: v1(), title: 'Huawei', OS: "Android", checked: false},
-		{id: v1(), title: 'Iphone 14', OS: "iOS", checked: false},
-	])
 
-		const addWish = (newTitle: string, newOs: OsType) => {
-		let newWish: WishesDataPropsType = {
-			id: v1(),
-			title: newTitle,
-			OS: newOs,
-			checked: false
-		}
-		setWishes([newWish, ...wishes])
-		}
-		return (
-			<div className="App">
-				<WishList wishes={wishes} addWish={addWish}/>
-			</div>
-		);
-	}
+function App() {
+    const [osFilter, setOsFilter] = useState<OsType>("All")
+    const [wishes, setWishes] = useState<WishesDataPropsType[]>([
+        {id: v1(), title: 'Samsung Galaxy S23', OS: "Android", checked: true},
+        {id: v1(), title: 'IPhone 13 ProMax', OS: "iOS", checked: true},
+        {id: v1(), title: 'Xiaomi 13', OS: "Android", checked: true},
+        {id: v1(), title: 'Huawei', OS: "Android", checked: false},
+        {id: v1(), title: 'Iphone 14', OS: "iOS", checked: false},
+    ])
+
+    const [newWishTitle, setNewWishTitle] = useState('')
+
+    const addNewWish = (os: OsTypeForSelect) => {
+        setWishes([{id: v1(), title: newWishTitle, OS: os, checked: false}, ...wishes])
+    }
+
+    const removeWish = (id: string) => {
+        setWishes(wishes.filter(el => el.id != id))
+    }
+
+    // const addItem = (newItem: string, wishFilter: OsTypeForSelect) => {
+    // 	let newWishItem = {id: v1(), title: newItem, OS: wishFilter, checked: false};
+    // 	setWishes([newWishItem, ...wishes]);
+    // }
+
+    const wishesWhatWeWantToSee = osFilter === "All" ? wishes : wishes.filter(el => el.OS === osFilter)
+    return (
+        <div className="App">
+
+            {/*<WishList wishes={wishesWhatWeWantToSee}*/}
+            {/*		  addItem={addItem}*/}
+            {/*		  osFilter={osFilter}*/}
+            {/*/>*/}
+
+            <WishList
+                removeWish={removeWish}
+                wishes={wishes}
+                addNewWish={addNewWish}
+                setNewWishTitle={setNewWishTitle}
+                newWishTitle={newWishTitle}/>
+        </div>
+    );
+}
+
 export default App;

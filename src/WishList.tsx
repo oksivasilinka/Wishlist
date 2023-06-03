@@ -1,58 +1,101 @@
-import React, {ChangeEvent, useState} from 'react';
+import React, {ChangeEvent, KeyboardEvent, useState} from 'react';
 import {OsType, WishesDataPropsType} from "./App";
+
+export type OsTypeForSelect = "Android" | "iOS" | "Select OS"
 
 export type WishListPropsType = {
     wishes: WishesDataPropsType[]
-    addWish: (newTitle: string, newOs: OsType)=> void
+    addItem?: (newItem: string, wishFilter: OsTypeForSelect) => void
+    osFilter?: OsType
+    setNewWishTitle: (text: string) => void
+    addNewWish: (os: OsTypeForSelect) => void
+    newWishTitle: string
+    removeWish: (wishId: string) => void
 }
 
 export const WishList = (props: WishListPropsType) => {
-    const [newTitle, setNewTitle] = useState<string>('')
-    const [newOs, setNewOs] = useState<OsType>('All')
+    // let [newItem, setNewItem] = useState("")
+    // let [os, setOS] = useState<OsTypeForSelect>("Select OS")
+    //
+    // const onNewItemChangeHandler = (e: ChangeEvent<HTMLInputElement>) => {
+    // 	setNewItem(e.currentTarget.value)
+    // }
+    //
+    // const addItemHandler = () => {
+    // 	if(os !== "Select OS"){
+    // 		if (newItem.trim() !== "") {
+    // 			props.addItem(newItem, os)
+    // 			setNewItem("")
+    // 			setOS("Select OS")
+    // 		}
+    // 	}
+    // 	else return
+    // }
+    //
+    // const onChangeOSHandler = (e:ChangeEvent<HTMLSelectElement>) => {
+    // 	setOS(e.currentTarget.value as OsTypeForSelect)
+    // }
 
-    const addWishHandler = (e: ChangeEvent<HTMLInputElement>) => {
-        setNewTitle(e.currentTarget.value)
+    const [os, setOs] = useState<OsTypeForSelect>('Select OS')
+
+    const onChangeOSHandler = (e: ChangeEvent<HTMLSelectElement>) => {
+        setOs(e.currentTarget.value as OsTypeForSelect)
     }
 
-    const addNewTitleHandler = () => {
-        if (newTitle.trim() !== '') {
-            props.addWish(newTitle, newOs)
-            setNewTitle('')
-            setNewOs('All')
+    const onNewWishChangeHandler = (e: ChangeEvent<HTMLInputElement>) => {
+        props.setNewWishTitle(e.currentTarget.value)
+    }
+
+    const addWishHandler = () => {
+        if (props.newWishTitle.trim() !== '' && os !== 'Select OS') {
+            props.addNewWish(os)
+            props.setNewWishTitle('')
+            setOs('Select OS')
         }
     }
 
-    const changeOsHandler = (e: ChangeEvent<HTMLSelectElement>) => {
-        setNewOs(e.currentTarget.value as OsType)
+    const onKeyDownHandler = (e: KeyboardEvent<HTMLInputElement>) => {
+        if (e.key === 'Enter') {
+            addWishHandler()
+        }
+    }
+
+    const onClickHandler = (id: string) => {
+        props.removeWish(id)
     }
 
     return (
         <div>
             <h1>Phones</h1>
             <div>
-                <input value={newTitle} onChange={addWishHandler} placeholder={"Enter an item"}/>
-                <select value={newOs} onChange={changeOsHandler}>
-                    <option selected value="All">Select OS</option>
-                    <option value="Android">Android</option>
-                    <option value="iOS">iOS</option>
+                <input placeholder={"Enter an item"}
+                       value={props.newWishTitle}
+                    // onChange={onNewItemChangeHandler}
+                       onChange={onNewWishChangeHandler}
+                       onKeyDown={onKeyDownHandler}
+                />
+                <select value={os} onChange={onChangeOSHandler}>
+                    <option value={"Select OS"}>Select OS</option>
+                    <option value={"Android"}>Android</option>
+                    <option value={"iOS"}>iOS</option>
                 </select>
-                <button onClick={addNewTitleHandler}>Add</button>
+                <button disabled={os === 'Select OS'} onClick={addWishHandler}>Add</button>
             </div>
             <ul>
-                {props.wishes.map(el =>  {
+                {props.wishes.map(el => {
                     return (
-                            <li key={el.id}>
-                                <input type="checkbox"
-                                       checked={el.checked}/>
-                                <span> {el.title}</span>
-                                <span> / OS: </span>
-                                <span> {el.OS} </span>
-                                <button>X</button>
-                            </li>
-                        )
-                    }
-                )}
-
+                        <li key={el.id}>
+                            <input type="checkbox" checked={el.checked}/>
+                            <span> {el.title} </span>
+                            <span> / OS: </span>
+                            <span> {el.OS} </span>
+                            <button onClick={() => {
+                                onClickHandler(el.id)
+                            }}>X
+                            </button>
+                        </li>
+                    )
+                })}
             </ul>
             <div>
                 FILTER BY:
