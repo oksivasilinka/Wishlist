@@ -7,6 +7,7 @@ export type WishListPropsType = {
     wishes: WishesDataPropsType[]
     addItem?: (newItem: string, wishFilter: OsTypeForSelect) => void
     osFilter?: OsType
+    setOsFilter: (osFilter: OsType)=> void
     setNewWishTitle: (text: string) => void
     addNewWish: (os: OsTypeForSelect) => void
     newWishTitle: string
@@ -60,6 +61,10 @@ export const WishList = (props: WishListPropsType) => {
         }
     }
 
+    const filterOsHandler = (e: ChangeEvent<HTMLSelectElement>) => {
+        props.setOsFilter(e.currentTarget.value as OsType)
+    }
+
     const onClickHandler = (id: string) => {
         props.removeWish(id)
     }
@@ -100,10 +105,18 @@ export const WishList = (props: WishListPropsType) => {
             <div>
                 FILTER BY:
                 <div>
-                    <select>
+                    <select value={props.osFilter} onChange={filterOsHandler}>
                         <option value="All">All</option>
                         <option value="Android">Android</option>
                         <option value="iOS">iOS</option>
+                    </select>
+                </div>
+                FILTER BY ACTIVITY:
+                <div>
+                    <select value={'change filter'}>
+                        <option value="All">All</option>
+                        <option value="Active">Active</option>
+                        <option value="Completed">Completed</option>
                     </select>
                 </div>
             </div>

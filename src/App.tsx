@@ -38,6 +38,9 @@ function App() {
     // }
 
     const wishesWhatWeWantToSee = osFilter === "All" ? wishes : wishes.filter(el => el.OS === osFilter)
+
+
+
     return (
         <div className="App">
 
@@ -48,10 +51,11 @@ function App() {
 
             <WishList
                 removeWish={removeWish}
-                wishes={wishes}
+                wishes={wishesWhatWeWantToSee}
                 addNewWish={addNewWish}
                 setNewWishTitle={setNewWishTitle}
-                newWishTitle={newWishTitle}/>
+                newWishTitle={newWishTitle}
+                setOsFilter={setOsFilter}/>
         </div>
     );
 }
