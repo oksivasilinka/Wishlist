@@ -1,5 +1,5 @@
 import React, {ChangeEvent, KeyboardEvent, useState} from 'react';
-import {OsType, WishesDataPropsType} from "./App";
+import {ActivityTypeForSelect, OsType, WishesDataPropsType} from "./App";
 
 export type OsTypeForSelect = "Android" | "iOS" | "Select OS"
 
@@ -7,11 +7,13 @@ export type WishListPropsType = {
     wishes: WishesDataPropsType[]
     addItem?: (newItem: string, wishFilter: OsTypeForSelect) => void
     osFilter?: OsType
-    setOsFilter: (osFilter: OsType)=> void
+    setOsFilter: (osFilter: OsType) => void
     setNewWishTitle: (text: string) => void
     addNewWish: (os: OsTypeForSelect) => void
     newWishTitle: string
     removeWish: (wishId: string) => void
+    activity: ActivityTypeForSelect
+    setActivity: (activity: ActivityTypeForSelect) => void
 }
 
 export const WishList = (props: WishListPropsType) => {
@@ -65,6 +67,10 @@ export const WishList = (props: WishListPropsType) => {
         props.setOsFilter(e.currentTarget.value as OsType)
     }
 
+    const filterActivityHandler = (e: ChangeEvent<HTMLSelectElement>) => {
+        props.setActivity(e.currentTarget.value as ActivityTypeForSelect)
+    }
+
     const onClickHandler = (id: string) => {
         props.removeWish(id)
     }
@@ -113,7 +119,7 @@ export const WishList = (props: WishListPropsType) => {
                 </div>
                 FILTER BY ACTIVITY:
                 <div>
-                    <select value={'change filter'}>
+                    <select value={props.activity} onChange={filterActivityHandler}>
                         <option value="All">All</option>
                         <option value="Active">Active</option>
                         <option value="Completed">Completed</option>
