@@ -16,6 +16,7 @@ export type WishesDataPropsType = {
 function App() {
     const [osFilter, setOsFilter] = useState<OsType>("All")
     const [activity, setActivity] = useState<ActivityTypeForSelect>('All')
+    const [newWishTitle, setNewWishTitle] = useState('')
     const [wishes, setWishes] = useState<WishesDataPropsType[]>([
         {id: v1(), title: 'Samsung Galaxy S23', OS: "Android", checked: true},
         {id: v1(), title: 'IPhone 13 ProMax', OS: "iOS", checked: true},
@@ -24,7 +25,7 @@ function App() {
         {id: v1(), title: 'Iphone 14', OS: "iOS", checked: false},
     ])
 
-    const [newWishTitle, setNewWishTitle] = useState('')
+
 
     const addNewWish = (os: OsTypeForSelect) => {
         setWishes([{id: v1(), title: newWishTitle, OS: os, checked: false}, ...wishes])
@@ -34,23 +35,18 @@ function App() {
         setWishes(wishes.filter(el => el.id != id))
     }
 
-    // const addItem = (newItem: string, wishFilter: OsTypeForSelect) => {
-    // 	let newWishItem = {id: v1(), title: newItem, OS: wishFilter, checked: false};
-    // 	setWishes([newWishItem, ...wishes]);
-    // }
-
     const wishesWhatWeWantToSee = osFilter === "All" ? wishes : wishes.filter(el => el.OS === osFilter)
-    const filterWishesByActivity = (activity === "All") ? wishesWhatWeWantToSee : activity === "Completed"
-        ? wishesWhatWeWantToSee.filter(el=> el.checked) : wishesWhatWeWantToSee.filter(el=> !el.checked)
+    const filterWishesByActivity = activity === "All" ? wishesWhatWeWantToSee
+        : activity === "Completed" ? wishesWhatWeWantToSee.filter(el=> el.checked)
+            : wishesWhatWeWantToSee.filter(el=> !el.checked)
+
+    const changeWishesStatus = (wishId: string, statusValue: boolean) => {
+        setWishes(wishes.map(el => el.id === wishId ? ({ ...el, checked: statusValue}) : el))
+    }
 
 
     return (
         <div className="App">
-
-            {/*<WishList wishes={wishesWhatWeWantToSee}*/}
-            {/*		  addItem={addItem}*/}
-            {/*		  osFilter={osFilter}*/}
-            {/*/>*/}
 
             <WishList
                 removeWish={removeWish}
@@ -60,7 +56,8 @@ function App() {
                 newWishTitle={newWishTitle}
                 setOsFilter={setOsFilter}
                 activity={activity}
-                setActivity={setActivity}/>
+                setActivity={setActivity}
+                changeWishesStatus={changeWishesStatus}/>
         </div>
     );
 }
